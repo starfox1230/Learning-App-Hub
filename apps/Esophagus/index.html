@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🌙 NightScan: Esophagus Tutor</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrQkTyV6tBZZ3N5W6YfsI3bBzKQm9V7+XSJkKf6V7YlMiaXS8Kq3v6H6aSlFyvXShT3eDkBw2+zKj9TFJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Global Styles */
+        body {
+            background: linear-gradient(135deg, #1e1e1e, #2c2c2c);
+            color: #e0e0e0;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            color: #00bfa5;
+            position: relative;
+            display: inline-block;
+        }
+
+        header h1::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: #ffab00;
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        header h1:hover::after {
+            width: 120%;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(31, 31, 31, 0.9);
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 80px; /* Height of header */
+            z-index: 999;
+        }
+
+        nav button {
+            background: #2c2c2c;
+            border: none;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            flex: 1 1 150px;
+            max-width: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav button::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: #00bfa5;
+            z-index: -1;
+            transition: width 0.4s;
+        }
+
+        nav button:hover::before, nav button.active::before {
+            width: 100%;
+        }
+
+        nav button:hover, nav button.active {
+            color: #121212;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #2c2c2c;
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+            height: 25px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00bfa5, #ffab00);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Container */
+        .container {
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: auto;
+            flex: 1;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Sections */
+        section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00bfa5;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 4px;
+            background: #ffab00;
+            bottom: 0;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: #ffab00;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p, ul {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+        }
+
+        /* Quiz Styles */
+        .quiz {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .quiz h3 {
+            color: #ffab00;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz h3::before {
+            content: '\f059';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 10px;
+        }
+
+        .quiz-question {
+            margin-bottom: 30px;
+        }
+
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            background: #3a3a3a;
+            border: none;
+            color: #e0e0e0;
+            padding: 12px 15px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: left;
+            transition: background 0.3s, transform 0.2s;
+            font-size: 1em;
+        }
+
+        .quiz-options button:hover:not(.disabled) {
+            background: #00bfa5;
+            color: #121212;
+            transform: scale(1.02);
+        }
+
+        .quiz-options button.disabled {
+            background: #424242;
+            color: #9e9e9e;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+            font-weight: bold;
+            animation: fadeInFeedback 0.3s ease-in-out;
+        }
+
+        .correct {
+            background: #388e3c;
+            color: #e0e0e0;
+        }
+
+        .incorrect {
+            background: #d32f2f;
+            color: #e0e0e0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(31, 31, 31, 0.9);
+            color: #e0e0e0;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInFeedback {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 800px) {
+            nav button {
+                flex: 1 1 120px;
+                max-width: none;
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .quiz-options button {
+                font-size: 0.95em;
+                padding: 10px 12px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            p, ul {
+                font-size: 1em;
+            }
+        }
+
+        /* Additional Visual Enhancements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/dark-matter.png') repeat;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .quiz-options button::after {
+            content: '\f061';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            float: right;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .quiz-options button:hover:not(.disabled)::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>🌙 NightScan: Esophagus Tutor</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-button active" data-section="anatomy">Anatomy</button>
+        <button class="nav-button" data-section="diverticula">Diverticula</button>
+        <button class="nav-button" data-section="reflux-esophagitis">Reflux Esophagitis</button>
+        <button class="nav-button" data-section="cancer">Cancer</button>
+        <button class="nav-button" data-section="management">Management</button>
+        <button class="nav-button" data-section="complications">Complications</button>
+        <button class="nav-button" data-section="trivia">Trivia</button>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="container">
+        <!-- Section 1: Anatomy -->
+        <section id="anatomy" class="active">
+            <h2>📚 Anatomy</h2>
+            <h3>A-Ring</h3>
+            <p><strong>ARm g:</strong> The muscular ring above the vestibule. Dynamic on swallow.</p>
+            <h3>B-Ring</h3>
+            <p>The mucosal ring below the vestibule. Not dynamic. This is a thin constriction at the GE junction. Symptomatic dysphagia can occur if it narrows (historically defined at &lt;13mm in diameter). If it’s narrowed (and symptomatic) you call it a Schatzki. Just say “Shatz-‘B ’-Ring”</p>
+            <h3>Z Line</h3>
+            <p>Represents the squamocolumnar junction (boundary between esophageal and gastric epithelium). This doesn’t necessarily correspond with the B-ring. This is an endoscopy finding, and is only rarely seen as a thin serrated line.</p>
+            <h3>Mucosa</h3>
+            <p>Mucosa should have thin, parallel uniform folds.</p>
+            <h3>Anatomic Trivia</h3>
+            <p><em>Additional anatomical details and trivia can be included here.</em></p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-anatomy-1">
+                    <p><strong>1. What does the ARm g represent?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) The mucosal ring below the vestibule</button>
+                        <button data-answer="B">B) The muscular ring above the vestibule</button>
+                        <button data-answer="C">C) The squamocolumnar junction</button>
+                        <button data-answer="D">D) The true upper esophageal sphincter</button>
+                    </div>
+                    <div class="feedback" id="feedback-anatomy-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-anatomy-2">
+                    <p><strong>2. What is the B-Ring also known as when it is narrowed and symptomatic?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Schatzki</button>
+                        <button data-answer="B">B) Zenker</button>
+                        <button data-answer="C">C) Killian-Jamieson</button>
+                        <button data-answer="D">D) Barrett's</button>
+                    </div>
+                    <div class="feedback" id="feedback-anatomy-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-anatomy-3">
+                    <p><strong>3. The Z Line represents the boundary between which two types of epithelium?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Squamous and glandular</button>
+                        <button data-answer="B">B) Columnar and cuboidal</button>
+                        <button data-answer="C">C) Squamous and columnar</button>
+                        <button data-answer="D">D) Transitional and squamous</button>
+                    </div>
+                    <div class="feedback" id="feedback-anatomy-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-anatomy-4">
+                    <p><strong>4. What characteristic should the mucosa of the esophagus have?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Thick, irregular folds</button>
+                        <button data-answer="B">B) Thin, parallel uniform folds</button>
+                        <button data-answer="C">C) No folds</button>
+                        <button data-answer="D">D) Circular folds</button>
+                    </div>
+                    <div class="feedback" id="feedback-anatomy-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Diverticula -->
+        <section id="diverticula">
+            <h2>🔍 Diverticula</h2>
+            <h3>Zenker Diverticulum</h3>
+            <p>Pulsion diverticulum located in the hypopharynx (back). Site of weakness is the Killian Dehiscence or triangle.</p>
+            <h3>Killian-Jamieson Diverticulum</h3>
+            <p>Pulsion diverticulum located in the cervical esophagus. It protrudes through an area of weakness below the attachment of the cricopharyngeus muscle and lateral to the ligaments that help suspend the esophagus on the cricoid cartilage.</p>
+            <h3>Epiphrenic Diverticula</h3>
+            <p>Located just above the diaphragm, usually on the right. These are para-esophageal hernias.</p>
+            <h3>Traction Diverticulum</h3>
+            <p>Mid esophageal, often triangular in shape, resulting from scarring (e.g., granulomatous disease or TB). They do not empty and contain muscle in their walls.</p>
+            <h3>Esophageal Pseudodiverticulosis</h3>
+            <p>Multiple small outpouchings due to dilated submucosal glands, often associated with chronic reflux esophagitis.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-diverticula-1">
+                    <p><strong>1. Where is the Zenker Diverticulum located?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Cervical esophagus</button>
+                        <button data-answer="B">B) Hypopharynx</button>
+                        <button data-answer="C">C) Mid esophagus</button>
+                        <button data-answer="D">D) Lower esophagus</button>
+                    </div>
+                    <div class="feedback" id="feedback-diverticula-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-diverticula-2">
+                    <p><strong>2. What distinguishes Traction Diverticula from Pulsion Diverticula?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Shape</button>
+                        <button data-answer="B">B) Presence of muscle in the wall</button>
+                        <button data-answer="C">C) Location</button>
+                        <button data-answer="D">D) Size</button>
+                    </div>
+                    <div class="feedback" id="feedback-diverticula-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-diverticula-3">
+                    <p><strong>3. Which type of diverticulum is associated with chronic reflux esophagitis?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Zenker</button>
+                        <button data-answer="B">B) Killian-Jamieson</button>
+                        <button data-answer="C">C) Epiphrenic</button>
+                        <button data-answer="D">D) Esophageal Pseudodiverticulosis</button>
+                    </div>
+                    <div class="feedback" id="feedback-diverticula-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-diverticula-4">
+                    <p><strong>4. What is a common complication of Epiphrenic Diverticula?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Perforation</button>
+                        <button data-answer="B">B) Recurrent reflux</button>
+                        <button data-answer="C">C) Incarceration</button>
+                        <button data-answer="D">D) Hemorrhage</button>
+                    </div>
+                    <div class="feedback" id="feedback-diverticula-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Reflux Esophagitis -->
+        <section id="reflux-esophagitis">
+            <h2>🔥 Reflux Esophagitis</h2>
+            <h3>Fold Thickening</h3>
+            <p>A common cause of fold thickening, which if left unchecked, can lead to serious complications such as strictures and Barrett's esophagus.</p>
+            <h3>Spectrum of Aggression</h3>
+            <p>Unchecked reflux can progress from mild fold thickening to severe fold thickening, leading to strictures and Barrett's esophagus, and eventually cancer.</p>
+            <h3>Barrett's Esophagus</h3>
+            <p>A precursor to esophageal adenocarcinoma, characterized by high stricture with an associated hiatal hernia.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-reflux-1">
+                    <p><strong>1. What can severe reflux esophagitis lead to if left unchecked?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Strictures and Barrett's Esophagus</button>
+                        <button data-answer="B">B) Increased mucosal folds</button>
+                        <button data-answer="C">C) Decreased risk of cancer</button>
+                        <button data-answer="D">D) Improved swallowing</button>
+                    </div>
+                    <div class="feedback" id="feedback-reflux-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-reflux-2">
+                    <p><strong>2. Barrett's Esophagus is a precursor to which type of cancer?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Squamous cell carcinoma</button>
+                        <button data-answer="B">B) Adenocarcinoma</button>
+                        <button data-answer="C">C) Melanoma</button>
+                        <button data-answer="D">D) Lymphoma</button>
+                    </div>
+                    <div class="feedback" id="feedback-reflux-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-reflux-3">
+                    <p><strong>3. What anatomical feature is associated with Barrett's Esophagus?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Z Line</button>
+                        <button data-answer="B">B) Hiatal Hernia</button>
+                        <button data-answer="C">C) A-Ring</button>
+                        <button data-answer="D">D) B-Ring</button>
+                    </div>
+                    <div class="feedback" id="feedback-reflux-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-reflux-4">
+                    <p><strong>4. What is the radiographic sign associated with Barrett's Esophagus?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Bird's Beak</button>
+                        <button data-answer="B">B) Irregular Contour</button>
+                        <button data-answer="C">C) High Stricture with Hiatal Hernia</button>
+                        <button data-answer="D">D) Smooth Stricture</button>
+                    </div>
+                    <div class="feedback" id="feedback-reflux-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Cancer -->
+        <section id="cancer">
+            <h2>🎗️ Esophageal Cancer</h2>
+            <h3>Types of Cancer</h3>
+            <h4>Squamous Cell Carcinoma</h4>
+            <p>Adenocarcinoma - develops secondary to chronic reflux. On barium, look for "irregular contour" and "abrupt (shouldered) edges."</p>
+            <h4>Adenocarcinoma</h4>
+            <p>Associated with chronic reflux and Barrett's Esophagus. Typically located in the lower esophagus.</p>
+            <h3>Critical Stages</h3>
+            <p><strong>T3 vs T4:</strong> Early stages are distinguished by endoscopy, while advanced stages (T3 and T4) require CT scans to assess invasion into adjacent structures.</p>
+            <h3>Treatment Options</h3>
+            <p>Fundoplication after failed H2 blockers and PPIs, esophagectomy, and in severe cases, palliative care options.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-cancer-1">
+                    <p><strong>1. Which type of esophageal cancer is associated with chronic reflux and Barrett's Esophagus?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Squamous Cell Carcinoma</button>
+                        <button data-answer="B">B) Adenocarcinoma</button>
+                        <button data-answer="C">C) Melanoma</button>
+                        <button data-answer="D">D) Lymphoma</button>
+                    </div>
+                    <div class="feedback" id="feedback-cancer-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-cancer-2">
+                    <p><strong>2. What radiographic signs are indicative of esophageal adenocarcinoma?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Bird's Beak</button>
+                        <button data-answer="B">B) Irregular Contour and Abrupt Edges</button>
+                        <button data-answer="C">C) Smooth Stricture</button>
+                        <button data-answer="D">D) Circular Folds</button>
+                    </div>
+                    <div class="feedback" id="feedback-cancer-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-cancer-3">
+                    <p><strong>3. Which stage of esophageal cancer involves invasion into adjacent structures?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) T1</button>
+                        <button data-answer="B">B) T2</button>
+                        <button data-answer="C">C) T3</button>
+                        <button data-answer="D">D) T4</button>
+                    </div>
+                    <div class="feedback" id="feedback-cancer-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-cancer-4">
+                    <p><strong>4. What is Fundoplication primarily used for in the management of esophageal conditions?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) To remove cancerous tissue</button>
+                        <button data-answer="B">B) To reinforce the lower esophageal sphincter</button>
+                        <button data-answer="C">C) To dilate strictures</button>
+                        <button data-answer="D">D) To biopsy the esophagus</button>
+                    </div>
+                    <div class="feedback" id="feedback-cancer-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Management -->
+        <section id="management">
+            <h2>🛠️ Management</h2>
+            <h3>Fundoplication</h3>
+            <p>The gastric fundus is wrapped around the lower end of the esophagus and stitched in place, reinforcing the lower esophageal sphincter. Types include:</p>
+            <ul>
+                <li><strong>Nissen:</strong> 360-degree wrap.</li>
+                <li><strong>Toupet:</strong> Loose wraps (<360 degrees).</li>
+            </ul>
+            <h4>Early Complications</h4>
+            <p>Esophageal obstruction or narrowing from post-op edema or overly tight wraps, peaking around week 2. Barium studies may show total or near-total obstruction.</p>
+            <h4>Failure of Fundoplication</h4>
+            <p>Recurrent reflux due to telescoping of the GE junction through the wrap (slipped Nissen), often caused by a short esophagus.</p>
+            <h3>Short Esophagus Treatment</h3>
+            <p><strong>Collis Gastroplasty:</strong> Lengthening of the esophagus followed by fundoplication.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-management-1">
+                    <p><strong>1. What degree of wrap is referred to as a Nissen fundoplication?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) 180 degrees</button>
+                        <button data-answer="B">B) 270 degrees</button>
+                        <button data-answer="C">C) 360 degrees</button>
+                        <button data-answer="D">D) 90 degrees</button>
+                    </div>
+                    <div class="feedback" id="feedback-management-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-management-2">
+                    <p><strong>2. What is the most common reason for a slipped Nissen fundoplication?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Over-tightening of the wrap</button>
+                        <button data-answer="B">B) Short esophagus</button>
+                        <button data-answer="C">C) Inadequate suturing</button>
+                        <button data-answer="D">D) Infection</button>
+                    </div>
+                    <div class="feedback" id="feedback-management-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-management-3">
+                    <p><strong>3. What procedure is used to treat a short esophagus?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Nissen Fundoplication</button>
+                        <button data-answer="B">B) Collis Gastroplasty</button>
+                        <button data-answer="C">C) Esophagectomy</button>
+                        <button data-answer="D">D) Barium Swallow</button>
+                    </div>
+                    <div class="feedback" id="feedback-management-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-management-4">
+                    <p><strong>4. What is an early complication of fundoplication?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Perforation</button>
+                        <button data-answer="B">B) Esophageal obstruction</button>
+                        <button data-answer="C">C) Stricture formation</button>
+                        <button data-answer="D">D) Hemorrhage</button>
+                    </div>
+                    <div class="feedback" id="feedback-management-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Complications -->
+        <section id="complications">
+            <h2>⚠️ Complications</h2>
+            <h3>Varices</h3>
+            <p>Varices can be classified based on their location and underlying cause:</p>
+            <ul>
+                <li><strong>Uphill Varices:</strong> Caused by portal hypertension, confined to the bottom half of the esophagus.</li>
+                <li><strong>Downhill Varices:</strong> Caused by SVC obstruction (e.g., catheter-related or tumor-related), confined to the top half of the esophagus.</li>
+            </ul>
+            <h3>Other Complications</h3>
+            <ul>
+                <li>Strictures</li>
+                <li>Barrett's Esophagus</li>
+                <li>Candida Infections</li>
+                <li>Herpes Ulcers</li>
+                <li>CMV/AIDS Ulcers</li>
+                <li>Crohn’s Esophagitis</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-complications-1">
+                    <p><strong>1. What causes downhill varices?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Portal Hypertension</button>
+                        <button data-answer="B">B) SVC Obstruction</button>
+                        <button data-answer="C">C) Chronic Reflux</button>
+                        <button data-answer="D">D) Infection</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-complications-2">
+                    <p><strong>2. Where are uphill varices typically confined?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Top half of the esophagus</button>
+                        <button data-answer="B">B) Bottom half of the esophagus</button>
+                        <button data-answer="C">C) Middle third of the esophagus</button>
+                        <button data-answer="D">D) Entire esophagus</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-complications-3">
+                    <p><strong>3. Which condition is NOT typically associated with esophageal complications?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Barrett's Esophagus</button>
+                        <button data-answer="B">B) Crohn’s Esophagitis</button>
+                        <button data-answer="C">C) Diabetes Mellitus</button>
+                        <button data-answer="D">D) CMV/AIDS</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-complications-4">
+                    <p><strong>4. What is a distinguishing feature of CMV/AIDS ulcers in the esophagus?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Large flat ovoid ulcers</button>
+                        <button data-answer="B">B) Small multiple ulcers with halo</button>
+                        <button data-answer="C">C) Discrete plaque-like lesions</button>
+                        <button data-answer="D">D) Transient fine transverse folds</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Trivia -->
+        <section id="trivia">
+            <h2>🧠 Trivia</h2>
+            <h3>Hand Placement for Barium Swallow</h3>
+            <p>When performing a thoracic barium swallow exam, the barium cup should be placed in the <strong>Left Posterior Oblique (LPO)</strong> position to avoid obscuring the field of view.</p>
+            <h3>Esophageal Spasm</h3>
+            <p>Characterized by "corkscrew" tertiary contractions favoring the distal esophagus. Nutcracker esophagus requires manometric findings (>180mmHg).</p>
+            <h3>Esophageal Pseudodiverticulosis</h3>
+            <p>Multiple small outpouchings resembling dilated excretory mucosal ducts, often associated with esophageal strictures (90%), reflux, and candidiasis.</p>
+            <h3>Plummer-Vinson Syndrome</h3>
+            <p>Characterized by iron deficiency anemia, dysphagia, and esophageal webs.</p>
+            <h3>Normal Submucosal Venous Plexus</h3>
+            <p>Higher up and shallow in the esophagus.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Questions -->
+                <div class="quiz-question" id="quiz-trivia-1">
+                    <p><strong>1. In which hand position should the barium cup be placed during a thoracic barium swallow?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Right Posterior Oblique</button>
+                        <button data-answer="B">B) Left Posterior Oblique</button>
+                        <button data-answer="C">C) Left Anterior Oblique</button>
+                        <button data-answer="D">D) Right Anterior Oblique</button>
+                    </div>
+                    <div class="feedback" id="feedback-trivia-1"></div>
+                </div>
+                <div class="quiz-question" id="quiz-trivia-2">
+                    <p><strong>2. What is the buzzword associated with Esophageal Pseudodiverticulosis?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Shaggy</button>
+                        <button data-answer="B">B) Ringed Esophagus</button>
+                        <button data-answer="C">C) Aphthous Ulcers</button>
+                        <button data-answer="D">D) Bird's Beak</button>
+                    </div>
+                    <div class="feedback" id="feedback-trivia-2"></div>
+                </div>
+                <div class="quiz-question" id="quiz-trivia-3">
+                    <p><strong>3. Which syndrome is characterized by iron deficiency anemia and esophageal webs?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Plummer-Vinson Syndrome</button>
+                        <button data-answer="B">B) Achalasia</button>
+                        <button data-answer="C">C) Eosinophilic Esophagitis</button>
+                        <button data-answer="D">D) Dysphagia Lusoria</button>
+                    </div>
+                    <div class="feedback" id="feedback-trivia-3"></div>
+                </div>
+                <div class="quiz-question" id="quiz-trivia-4">
+                    <p><strong>4. What is the normal location of the submucosal venous plexus in the esophagus?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Lower esophagus</button>
+                        <button data-answer="B">B) Middle esophagus</button>
+                        <button data-answer="C">C) Upper esophagus</button>
+                        <button data-answer="D">D) Entire esophagus</button>
+                    </div>
+                    <div class="feedback" id="feedback-trivia-4"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 NightScan. All rights reserved.
+    </footer>
+
+    <!-- JavaScript for Navigation and Quiz Functionality -->
+    <script>
+        // Navigation Handling
+        const navButtons = document.querySelectorAll('.nav-button');
+        const sections = document.querySelectorAll('section');
+        const progressBar = document.getElementById('progress-bar');
+        const totalSections = navButtons.length;
+        const completedSections = new Set();
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                // Hide all sections
+                sections.forEach(sec => sec.classList.remove('active'));
+                // Show the selected section
+                const sectionId = button.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                // Update Progress Bar
+                updateProgress(button);
+            });
+        });
+
+        // Progress Bar Handling
+        function updateProgress(currentButton) {
+            const sectionId = currentButton.getAttribute('data-section');
+            if (!completedSections.has(sectionId)) {
+                completedSections.add(sectionId);
+            }
+            const percent = (completedSections.size / totalSections) * 100;
+            progressBar.style.width = percent + '%';
+        }
+
+        // Quiz Handling
+        const quizButtons = document.querySelectorAll('.quiz-options button');
+        quizButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const parent = button.closest('.quiz-question');
+                const feedback = parent.querySelector('.feedback');
+                const selected = button.getAttribute('data-answer');
+                const questionId = parent.id;
+
+                // Define correct answers
+                const answers = {
+                    // Anatomy
+                    'quiz-anatomy-1': 'B',
+                    'quiz-anatomy-2': 'A',
+                    'quiz-anatomy-3': 'C',
+                    'quiz-anatomy-4': 'B',
+                    // Diverticula
+                    'quiz-diverticula-1': 'B',
+                    'quiz-diverticula-2': 'B',
+                    'quiz-diverticula-3': 'D',
+                    'quiz-diverticula-4': 'C',
+                    // Reflux Esophagitis
+                    'quiz-reflux-1': 'A',
+                    'quiz-reflux-2': 'B',
+                    'quiz-reflux-3': 'B',
+                    'quiz-reflux-4': 'C',
+                    // Cancer
+                    'quiz-cancer-1': 'B',
+                    'quiz-cancer-2': 'B',
+                    'quiz-cancer-3': 'D',
+                    'quiz-cancer-4': 'B',
+                    // Management
+                    'quiz-management-1': 'C',
+                    'quiz-management-2': 'B',
+                    'quiz-management-3': 'B',
+                    'quiz-management-4': 'B',
+                    // Complications
+                    'quiz-complications-1': 'B',
+                    'quiz-complications-2': 'B',
+                    'quiz-complications-3': 'C',
+                    'quiz-complications-4': 'B',
+                    // Trivia
+                    'quiz-trivia-1': 'B',
+                    'quiz-trivia-2': 'A',
+                    'quiz-trivia-3': 'A',
+                    'quiz-trivia-4': 'C'
+                };
+
+                // Check the answer
+                if (selected === answers[questionId]) {
+                    feedback.textContent = '✅ Correct!';
+                    feedback.classList.remove('incorrect');
+                    feedback.classList.add('correct');
+                    feedback.style.display = 'block';
+                    // Disable all buttons for this question
+                    const options = parent.querySelectorAll('.quiz-options button');
+                    options.forEach(opt => opt.classList.add('disabled'));
+                } else {
+                    feedback.textContent = '❌ Incorrect. Try again!';
+                    feedback.classList.remove('correct');
+                    feedback.classList.add('incorrect');
+                    feedback.style.display = 'block';
+                    // Disable only the incorrect button
+                    button.classList.add('disabled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
