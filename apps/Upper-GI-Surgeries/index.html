@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🌌 SpaceLearn: Upper GI Surgeries Tutor</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Space Theme Styles */
+        body {
+            background: radial-gradient(circle at top center, #1b1b2f, #16213e);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(27, 27, 47, 0.9);
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(128, 0, 128, 0.5);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #9b59b6;
+            text-shadow: 0 0 10px #9b59b6, 0 0 20px #8e44ad;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(27, 27, 47, 0.8);
+            padding: 10px 0;
+            box-shadow: 0 0 10px rgba(128, 0, 128, 0.3);
+        }
+
+        nav button {
+            background: rgba(44, 44, 44, 0.9);
+            border: none;
+            color: #e0e0e0;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: background-color 0.3s, transform 0.3s;
+            flex: 1 1 150px;
+            max-width: 200px;
+            font-size: 0.9em;
+            text-shadow: 0 0 5px #9b59b6;
+        }
+
+        nav button:hover, nav button.active {
+            background: #9b59b6;
+            color: #121212;
+            box-shadow: 0 0 20px #9b59b6;
+            transform: scale(1.05);
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: auto;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(128, 0, 128, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            color: #bb86fc;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #bb86fc;
+        }
+
+        h3 {
+            color: #ff79c6;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #ff79c6;
+        }
+
+        p, ul {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+        }
+
+        /* Quiz Styles */
+        .quiz {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(75, 0, 130, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(128, 0, 128, 0.5);
+        }
+
+        .quiz h3 {
+            color: #ffb6c1;
+        }
+
+        .quiz-question {
+            margin-bottom: 30px;
+        }
+
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            background: rgba(44, 44, 44, 0.9);
+            border: none;
+            color: #e0e0e0;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: left;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 1em;
+            text-shadow: 0 0 5px #bb86fc;
+        }
+
+        .quiz-options button:hover:not(.disabled) {
+            background: #bb86fc;
+            color: #121212;
+            box-shadow: 0 0 10px #bb86fc;
+            transform: scale(1.02);
+        }
+
+        .quiz-options button.disabled {
+            background: rgba(66, 66, 66, 0.7);
+            color: #9e9e9e;
+            cursor: not-allowed;
+            text-shadow: none;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .correct {
+            background-color: rgba(56, 142, 60, 0.8);
+            color: #e0e0e0;
+            text-shadow: 0 0 5px #4caf50;
+        }
+
+        .incorrect {
+            background-color: rgba(211, 47, 47, 0.8);
+            color: #e0e0e0;
+            text-shadow: 0 0 5px #f44336;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: rgba(44, 44, 44, 0.8);
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 20px 0;
+            height: 25px;
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #bb86fc;
+            width: 0%;
+            transition: width 0.3s;
+            box-shadow: 0 0 10px #bb86fc;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(27, 27, 47, 0.9);
+            color: #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad, #9b59b6);
+            animation: glow 3s infinite;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            nav button {
+                flex: 1 1 120px;
+                max-width: 180px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            nav button {
+                flex: 1 1 100px;
+                max-width: none;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            h2, h3 {
+                text-align: center;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>🌌 SpaceLearn: Upper GI Surgeries Tutor</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-button active" data-section="gastric-band">Gastric Band</button>
+        <button class="nav-button" data-section="billroth-1">Billroth I</button>
+        <button class="nav-button" data-section="billroth-2">Billroth II</button>
+        <button class="nav-button" data-section="roux-en-y">Roux-en-Y</button>
+        <button class="nav-button" data-section="complications">Complications</button>
+        <button class="nav-button" data-section="sbo">Small Bowel Obstruction</button>
+        <button class="nav-button" data-section="internal-hernias">Internal Hernias</button>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="container">
+        <!-- Section: Gastric Band -->
+        <section id="gastric-band" class="active">
+            <h2>🔗 Gastric Band</h2>
+            <p>
+                The Gastric Band surgery is typically performed on patients who have spent years steadily consuming high-calorie, indulgent foods such as whipped cream, congealed foods, and chocolates. This diet, combined with prolonged periods in a horizontal position, has necessitated the surgical procedure to help control overeating.
+            </p>
+            <ul>
+                <li>The application of an inflatable silicone band around the upper part of the stomach creates a restrictive pouch.</li>
+                <li>This limits the amount of food (e.g., french fries and ice cream) that can be eaten at one time.</li>
+                <li>The goal is to inspire the patient to “stop eating” when they feel full.</li>
+                <li>Common in certain populations (e.g., southern West Virginia).</li>
+            </ul>
+
+            <h3>📌 Complications of Gastric Band</h3>
+            <ul>
+                <li><strong>Stomal Stenosis:</strong> Most common complication due to the band being too tight. Classic history includes vomiting. Barium exam shows a dilated proximal pouch with leftover food (e.g., Wendy’s cheeseburger) floating in the barium.</li>
+                <li><strong>Gastric Band Erosion and Gastric Leak:</strong> Can occur from pressure-related ischemia. Classic look on CT is the band within the lumen of the stomach.</li>
+                <li><strong>Band Slippage:</strong> Most likely to be tested. The band should be positioned around the 2 o’clock position with a phi angle between 45-50 degrees. If the angle is off (more flat), it indicates the band has slipped, potentially leading to obstruction.</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-gastric-band-1">
+                    <p><strong>1. What is the primary purpose of a Gastric Band?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) To remove a portion of the stomach</button>
+                        <button data-answer="B">B) To create a restrictive pouch by applying an inflatable silicone band</button>
+                        <button data-answer="C">C) To connect the stomach directly to the jejunum</button>
+                        <button data-answer="D">D) To attach the stomach to the duodenum</button>
+                    </div>
+                    <div class="feedback" id="feedback-gastric-band-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-gastric-band-2">
+                    <p><strong>2. What is the most common complication of Gastric Band surgery?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Dumping Syndrome</button>
+                        <button data-answer="B">B) Stomal Stenosis</button>
+                        <button data-answer="C">C) Marginal Ulcer</button>
+                        <button data-answer="D">D) Jejunogastric Intussusception</button>
+                    </div>
+                    <div class="feedback" id="feedback-gastric-band-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-gastric-band-3">
+                    <p><strong>3. On a barium exam, stomal stenosis is indicated by:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Band within the lumen of the stomach</button>
+                        <button data-answer="B">B) Dilated proximal pouch with leftover food floating in the barium</button>
+                        <button data-answer="C">C) Sharp contour with folds radiating to ulcer</button>
+                        <button data-answer="D">D) Smoothly marginated exophytic growth</button>
+                    </div>
+                    <div class="feedback" id="feedback-gastric-band-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-gastric-band-4">
+                    <p><strong>4. What angle indicates a correctly positioned Gastric Band?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) 30-35 degrees</button>
+                        <button data-answer="B">B) 45-50 degrees</button>
+                        <button data-answer="C">C) 60-65 degrees</button>
+                        <button data-answer="D">D) 75-80 degrees</button>
+                    </div>
+                    <div class="feedback" id="feedback-gastric-band-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Billroth I -->
+        <section id="billroth-1">
+            <h2>🔄 Billroth I</h2>
+            <p>
+                Billroth I is a type of upper GI surgery where a partial gastrectomy is performed, and the remaining portion of the stomach is directly attached to the duodenum.
+            </p>
+            <ul>
+                <li>Performed for Gastric Cancer, Pyloric Dysfunction, or Ulcers in the distal stomach.</li>
+                <li>Risks include dumping syndrome and afferent loop syndrome.</li>
+                <li>Less post-operative gastritis compared to Billroth II.</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-billroth1-1">
+                    <p><strong>1. What is Billroth I surgery?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Partial gastrectomy with attachment to the jejunum</button>
+                        <button data-answer="B">B) Partial gastrectomy with attachment to the duodenum</button>
+                        <button data-answer="C">C) Complete gastrectomy with jejunal attachment</button>
+                        <button data-answer="D">D) Complete gastrectomy with duodenal attachment</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth1-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-billroth1-2">
+                    <p><strong>2. Billroth I is typically performed for:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Esophageal varices</button>
+                        <button data-answer="B">B) Gastric Cancer and Pyloric Dysfunction</button>
+                        <button data-answer="C">C) Small bowel obstruction</button>
+                        <button data-answer="D">D) Pancreatic tumors</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth1-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-billroth1-3">
+                    <p><strong>3. Compared to Billroth II, Billroth I has:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Higher risk of post-operative gastritis</button>
+                        <button data-answer="B">B) Lower risk of post-operative gastritis</button>
+                        <button data-answer="C">C) Higher risk of dumping syndrome</button>
+                        <button data-answer="D">D) Lower risk of afferent loop syndrome</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth1-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-billroth1-4">
+                    <p><strong>4. In Billroth I, the remaining stomach is attached to which part of the GI tract?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Jejunum</button>
+                        <button data-answer="B">B) Ileum</button>
+                        <button data-answer="C">C) Duodenum</button>
+                        <button data-answer="D">D) Colon</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth1-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Billroth II -->
+        <section id="billroth-2">
+            <h2>🔄 Billroth II</h2>
+            <p>
+                Billroth II is a type of upper GI surgery where a partial gastrectomy is performed, and the remaining portion of the stomach is attached to the jejunum. Unlike Billroth I, the pylorus is removed and the proximal stomach is sewn directly to the jejunum.
+            </p>
+            <ul>
+                <li>Performed for Gastric Cancer, Ulcers in the distal stomach, or Pyloric Dysfunction.</li>
+                <li>Risks include dumping syndrome, afferent loop syndrome, and more early post-operative complications compared to Billroth I.</li>
+                <li>Associated with a higher risk of developing adenocarcinoma in the gastric remnant 10-20 years post-surgery.</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-billroth2-1">
+                    <p><strong>1. What distinguishes Billroth II from Billroth I surgery?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Attachment to the duodenum</button>
+                        <button data-answer="B">B) Attachment to the jejunum</button>
+                        <button data-answer="C">C) Complete removal of the stomach</button>
+                        <button data-answer="D">D) No removal of the pylorus</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth2-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-billroth2-2">
+                    <p><strong>2. Billroth II surgery is commonly performed for:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Duodenal ulcers</button>
+                        <button data-answer="B">B) Gastric Cancer and distal stomach ulcers</button>
+                        <button data-answer="C">C) Esophageal varices</button>
+                        <button data-answer="D">D) Small bowel obstruction</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth2-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-billroth2-3">
+                    <p><strong>3. One of the major risks associated with Billroth II is:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Lower risk of dumping syndrome</button>
+                        <button data-answer="B">B) Increased risk of afferent loop syndrome</button>
+                        <button data-answer="C">C) Decreased risk of gastric remnant cancer</button>
+                        <button data-answer="D">D) No risk of post-operative complications</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth2-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-billroth2-4">
+                    <p><strong>4. In Billroth II, the proximal stomach is sewn directly to which part of the GI tract?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Duodenum</button>
+                        <button data-answer="B">B) Jejunum</button>
+                        <button data-answer="C">C) Ileum</button>
+                        <button data-answer="D">D) Colon</button>
+                    </div>
+                    <div class="feedback" id="feedback-billroth2-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Roux-en-Y -->
+        <section id="roux-en-y">
+            <h2>🔄 Roux-en-Y</h2>
+            <p>
+                Roux-en-Y is a type of upper GI surgery where the stomach is divided to create a pouch, which is then attached to the jejunum. The excluded stomach attaches to the duodenum as per normal. The jejunum is connected to another jejunum segment to form the bottom of the "Y."
+            </p>
+            <ul>
+                <li>Performed for obesity, gastric cancer, or as an alternative to Billroth surgeries if the primary lesion has invaded the duodenum or pancreas.</li>
+                <li>Pros include less reflux and lower risk of recurrent gastric cancer.</li>
+                <li>Risks include leaks, gallstones, fistulas, internal hernias, and other complications.</li>
+            </ul>
+
+            <h3>📌 Anastomosis Points in Roux-en-Y</h3>
+            <ul>
+                <li><strong>Gastro-Jejunal (efferent) Limb:</strong> The "feeding limb" attached to the gastric pouch.</li>
+                <li><strong>Bilio-Pancreatic (afferent) Limb:</strong> The limb attached to the excluded stomach and duodenum.</li>
+                <li><strong>Jejuno-Jejunal Anastomosis:</strong> Connects the afferent limb to another jejunal segment to form the "Y."</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-roux-en-y-1">
+                    <p><strong>1. What is created during Roux-en-Y surgery?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) A restrictive pouch in the upper stomach</button>
+                        <button data-answer="B">B) A pouch attached directly to the duodenum</button>
+                        <button data-answer="C">C) A pouch attached to the jejunum with the excluded stomach connected to the duodenum</button>
+                        <button data-answer="D">D) Complete removal of the stomach</button>
+                    </div>
+                    <div class="feedback" id="feedback-roux-en-y-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-roux-en-y-2">
+                    <p><strong>2. Roux-en-Y is an alternative to Billroth surgeries when:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) The patient has small bowel obstruction</button>
+                        <button data-answer="B">B) The primary lesion has directly invaded the duodenum or pancreas</button>
+                        <button data-answer="C">C) The patient is young</button>
+                        <button data-answer="D">D) The patient has esophageal varices</button>
+                    </div>
+                    <div class="feedback" id="feedback-roux-en-y-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-roux-en-y-3">
+                    <p><strong>3. One of the advantages of Roux-en-Y over Billroth II is:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Higher risk of gastric remnant cancer</button>
+                        <button data-answer="B">B) Less risk of reflux</button>
+                        <button data-answer="C">C) Increased risk of dumping syndrome</button>
+                        <button data-answer="D">D) Higher risk of afferent loop syndrome</button>
+                    </div>
+                    <div class="feedback" id="feedback-roux-en-y-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-roux-en-y-4">
+                    <p><strong>4. In Roux-en-Y surgery, the jejunum is connected to form the bottom of the "Y." What are the two limbs called?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Afferent and Efferent limbs</button>
+                        <button data-answer="B">B) Proximal and Distal limbs</button>
+                        <button data-answer="C">C) Anterior and Posterior limbs</button>
+                        <button data-answer="D">D) Superior and Inferior limbs</button>
+                    </div>
+                    <div class="feedback" id="feedback-roux-en-y-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Complications -->
+        <section id="complications">
+            <h2>⚠️ Complications</h2>
+            <h3>📌 Dumping Syndrome</h3>
+            <p>
+                Dumping Syndrome is a group of symptoms including diarrhea, nausea, and feeling lightheaded or tired after a meal. It is caused by rapid gastric emptying and is commonly seen with Billroth II and early post-operative periods after Roux-en-Y.
+            </p>
+            <ul>
+                <li>Related to rapid transit of undigested food from the stomach.</li>
+                <li>Diagnosed with a gastric emptying study.</li>
+                <li>Treatment typically involves conversion of Billroth to Roux-en-Y and avoiding high-carbohydrate foods.</li>
+                <li><strong>Trivia:</strong> Insert a joke about Taco Bell or a family member's cooking to remember the syndrome.</li>
+            </ul>
+
+            <h3>📌 Afferent Loop Syndrome</h3>
+            <p>
+                Afferent Loop Syndrome is a potential complication post Billroth II and Roux-en-Y surgeries. It occurs when an obstruction (extrinsic or intrinsic) blocks the upstream afferent limb, causing secretions, bile, and pancreatic juice to build up.
+            </p>
+            <ul>
+                <li>Presentation includes belly pain often with bilious vomiting.</li>
+                <li>Imaging shows a fluid-filled “U-shaped” loop of bowel adjacent to the pancreas.</li>
+                <li>Can lead to gallbladder dilation and pancreatitis.</li>
+            </ul>
+
+            <h3>📌 Leak</h3>
+            <p>
+                Leaks typically occur early (within 10 days post-op) at the anastomosis of the stomach and small bowel (gastrojejunostomy). 
+            </p>
+            <ul>
+                <li>Best detected with a water-soluble oral contrast exam in Fluoroscopy 1-2 days post-op.</li>
+                <li>Positive leak is indicated by contrast outside the lumen of the stomach or bowel.</li>
+                <li>Risk of barium peritonitis if barium leaks.</li>
+                <li><strong>Trivia:</strong> A heart rate > 120 is a reliable sign of perforation.</li>
+            </ul>
+
+            <h3>📌 Gastro-Gastric Fistula</h3>
+            <p>
+                Seen in Roux-en-Y patients with weight gain years after surgery, allowing access to the excluded stomach.
+            </p>
+            <ul>
+                <li>The fistula allows ingestion of more food without discomfort.</li>
+                <li>Often a chronic process with little pain.</li>
+            </ul>
+
+            <h3>📌 Marginal Ulcer</h3>
+            <p>
+                Ulcers at or near the gastrojejunostomy anastomosis are referred to as marginal ulcers.
+            </p>
+            <ul>
+                <li>Most common location is just distal to the gastrojejunostomy anastomosis.</li>
+                <li><strong>Gamesmanship:</strong> Marginal ulcers are classically solitary. Multiple large ulcers in this region may suggest chronic jejunal ischemia.</li>
+            </ul>
+
+            <h3>📌 Jejunogastric Intussusception</h3>
+            <p>
+                A rare complication where the jejunum herniates back into the stomach, usually the efferent limb, causing gastric obstruction.
+            </p>
+            <ul>
+                <li>High mortality rate in the acute form.</li>
+                <li>Requires immediate surgical intervention.</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-complications-1">
+                    <p><strong>1. What is Dumping Syndrome?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) A type of internal hernia</button>
+                        <button data-answer="B">B) A group of symptoms caused by rapid gastric emptying</button>
+                        <button data-answer="C">C) An obstruction of the afferent limb</button>
+                        <button data-answer="D">D) A leak at the anastomosis site</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-complications-2">
+                    <p><strong>2. Afferent Loop Syndrome is characterized by:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Rapid gastric emptying</button>
+                        <button data-answer="B">B) Leakage at the anastomosis site</button>
+                        <button data-answer="C">C) Obstruction of the afferent limb causing secretions to build up</button>
+                        <button data-answer="D">D) Formation of a fistula between the jejunum and stomach</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-complications-3">
+                    <p><strong>3. What is the best diagnostic test for detecting a leak after upper GI surgery?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Barium swallow</button>
+                        <button data-answer="B">B) Water-soluble oral contrast exam in Fluoroscopy</button>
+                        <button data-answer="C">C) MRI</button>
+                        <button data-answer="D">D) Ultrasound</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-complications-4">
+                    <p><strong>4. Jejunogastric Intussusception is:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) A common complication with low mortality</button>
+                        <button data-answer="B">B) A rare complication with high mortality</button>
+                        <button data-answer="C">C) An indication for gastric banding</button>
+                        <button data-answer="D">D) Related to afferent loop obstruction</button>
+                    </div>
+                    <div class="feedback" id="feedback-complications-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Small Bowel Obstruction -->
+        <section id="sbo">
+            <h2>🚧 Small Bowel Obstruction (SBO)</h2>
+            <h3>🔍 Types of SBO</h3>
+            <p>
+                Understanding the types of Small Bowel Obstruction is crucial, especially in patients with a history of Roux-en-Y surgery. SBO can be categorized into two main types: Simple Mechanical and Closed Loop Obstruction.
+            </p>
+            <ul>
+                <li><strong>Simple Mechanical Obstruction:</strong> A bowel loop is obstructed at a single point.</li>
+                <li><strong>Closed Loop Obstruction:</strong> A bowel loop is obstructed at two or more adjacent points, forming a closed loop.</li>
+            </ul>
+
+            <h3>📌 Simple Mechanical Obstruction</h3>
+            <p>
+                In simple mechanical obstruction, there is a single lead point causing obstruction, leading to intestinal distention.
+            </p>
+            <ul>
+                <li>Accumulation of gas and fluids upstream from the obstruction.</li>
+                <li>Imaging shows air-fluid levels.</li>
+                <li>Treatment centers around decompression using NG tubes.</li>
+            </ul>
+
+            <h3>📌 Closed Loop Obstruction</h3>
+            <p>
+                Closed Loop Obstruction involves two or more transition points, creating a loop that can quickly lead to ischemia and requires surgical intervention.
+            </p>
+            <ul>
+                <li>Presentation includes more severe and rapid onset of ischemic symptoms.</li>
+                <li>Imaging may show a "beak sign" and a "radial layout" of the bowel loops.</li>
+                <li>High risk for ischemia and perforation.</li>
+            </ul>
+
+            <h3>📌 Beak Sign and Radial Layout</h3>
+            <ul>
+                <li><strong>Beak Sign:</strong> Three “beaks” or transition points indicating obstruction.</li>
+                <li><strong>Radial Layout:</strong> Vessels and loops converge towards a central point, often seen in twisted bowel segments.</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-sbo-1">
+                    <p><strong>1. What distinguishes Closed Loop Obstruction from Simple Mechanical Obstruction?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Closed Loop has only one point of obstruction</button>
+                        <button data-answer="B">B) Closed Loop has two or more adjacent points of obstruction</button>
+                        <button data-answer="C">C) Simple Mechanical has a higher risk of ischemia</button>
+                        <button data-answer="D">D) Simple Mechanical is always due to adhesions</button>
+                    </div>
+                    <div class="feedback" id="feedback-sbo-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-sbo-2">
+                    <p><strong>2. What is the "Beak Sign" indicative of in imaging?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Simple Mechanical Obstruction</button>
+                        <button data-answer="B">B) Closed Loop Obstruction</button>
+                        <button data-answer="C">C) Hernia</button>
+                        <button data-answer="D">D) Intussusception</button>
+                    </div>
+                    <div class="feedback" id="feedback-sbo-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-sbo-3">
+                    <p><strong>3. Which type of SBO is associated with a higher risk of ischemia and requires surgical intervention?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Simple Mechanical Obstruction</button>
+                        <button data-answer="B">B) Closed Loop Obstruction</button>
+                        <button data-answer="C">C) Both have equal risk</button>
+                        <button data-answer="D">D) Neither requires surgical intervention</button>
+                    </div>
+                    <div class="feedback" id="feedback-sbo-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-sbo-4">
+                    <p><strong>4. What is a common imaging finding in Simple Mechanical Obstruction?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) No air-fluid levels</button>
+                        <button data-answer="B">B) Air-fluid levels</button>
+                        <button data-answer="C">C) Radial layout of bowel loops</button>
+                        <button data-answer="D">D) Absence of transition points</button>
+                    </div>
+                    <div class="feedback" id="feedback-sbo-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Internal Hernias -->
+        <section id="internal-hernias">
+            <h2>🌀 Internal Hernias</h2>
+            <p>
+                Internal hernias are a potential complication post Roux-en-Y surgery, especially in the retrocolic subtype where a defect is created in the transverse mesocolon.
+            </p>
+            <ul>
+                <li>Types:
+                    <ul>
+                        <li><strong>Ante-Colic:</strong> Roux limb passes in front of the transverse colon.</li>
+                        <li><strong>Retro-Colic:</strong> Roux limb passes behind the transverse colon, requiring a defect in the transverse mesocolon.</li>
+                    </ul>
+                </li>
+                <li>Potential sites for internal hernias:
+                    <ul>
+                        <li>Defect in the Transverse Mesocolon</li>
+                        <li>Mesenteric Defect at the Enteroenterostomy</li>
+                        <li>Petersen's Defect (behind the Roux limb mesentery)</li>
+                    </ul>
+                </li>
+                <li>Risk Factors:
+                    <ul>
+                        <li>Ante-Colic or Retro-Colic configuration</li>
+                        <li>Surgical defects created during Roux-en-Y</li>
+                        <li>Adhesions from previous surgeries</li>
+                        <li>Increased mobility due to laparoscopic procedures</li>
+                        <li>Degree of weight loss (less mesenteric fat allows easier twisting)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>📌 Petersen's Defect</h3>
+            <ul>
+                <li>Located behind the Roux limb mesentery in retrocolic Roux-en-Y.</li>
+                <li>Potential site for internal hernias.</li>
+                <li>Can lead to Closed Loop Obstruction.</li>
+            </ul>
+
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-internal-hernias-1">
+                    <p><strong>1. What type of Roux-en-Y configuration requires a defect in the transverse mesocolon?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Ante-Colic</button>
+                        <button data-answer="B">B) Retro-Colic</button>
+                        <button data-answer="C">C) Both Ante-Colic and Retro-Colic</button>
+                        <button data-answer="D">D) Neither</button>
+                    </div>
+                    <div class="feedback" id="feedback-internal-hernias-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-internal-hernias-2">
+                    <p><strong>2. Petersen's Defect is associated with which type of Roux-en-Y configuration?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Ante-Colic</button>
+                        <button data-answer="B">B) Retro-Colic</button>
+                        <button data-answer="C">C) Both Ante-Colic and Retro-Colic</button>
+                        <button data-answer="D">D) Neither</button>
+                    </div>
+                    <div class="feedback" id="feedback-internal-hernias-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-internal-hernias-3">
+                    <p><strong>3. Which of the following increases the risk of internal hernias in Roux-en-Y?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Decreased mobility from open surgery</button>
+                        <button data-answer="B">B) Increased mesenteric fat</button>
+                        <button data-answer="C">C) Laparoscopic procedures creating more mobility</button>
+                        <button data-answer="D">D) Reduced weight loss</button>
+                    </div>
+                    <div class="feedback" id="feedback-internal-hernias-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-internal-hernias-4">
+                    <p><strong>4. What is a common complication resulting from an internal hernia in Roux-en-Y?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Dumping Syndrome</button>
+                        <button data-answer="B">B) Closed Loop Obstruction</button>
+                        <button data-answer="C">C) Marginal Ulcer</button>
+                        <button data-answer="D">D) Gastro-Gastric Fistula</button>
+                    </div>
+                    <div class="feedback" id="feedback-internal-hernias-4"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 SpaceLearn. All rights reserved.
+    </footer>
+
+    <!-- JavaScript for Navigation and Quiz Functionality -->
+    <script>
+        // Navigation Handling
+        const navButtons = document.querySelectorAll('.nav-button');
+        const sections = document.querySelectorAll('section');
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                // Hide all sections
+                sections.forEach(sec => sec.classList.remove('active'));
+                // Show the selected section
+                const sectionId = button.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                // Update Progress Bar
+                updateProgress(button);
+            });
+        });
+
+        // Progress Bar Handling
+        const progressBar = document.getElementById('progress-bar');
+        const totalSections = navButtons.length;
+        const completedSections = new Set();
+
+        function updateProgress(currentButton) {
+            const sectionId = currentButton.getAttribute('data-section');
+            if (!completedSections.has(sectionId)) {
+                completedSections.add(sectionId);
+            }
+            const percent = (completedSections.size / totalSections) * 100;
+            progressBar.style.width = percent + '%';
+        }
+
+        // Quiz Handling
+        const quizButtons = document.querySelectorAll('.quiz-options button');
+        quizButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const parent = button.closest('.quiz-question');
+                const feedback = parent.querySelector('.feedback');
+                const selected = button.getAttribute('data-answer');
+                const questionId = parent.id;
+
+                // Define correct answers
+                const answers = {
+                    // Gastric Band
+                    'quiz-gastric-band-1': 'B',
+                    'quiz-gastric-band-2': 'B',
+                    'quiz-gastric-band-3': 'B',
+                    'quiz-gastric-band-4': 'B',
+                    // Billroth I
+                    'quiz-billroth1-1': 'B',
+                    'quiz-billroth1-2': 'B',
+                    'quiz-billroth1-3': 'B',
+                    'quiz-billroth1-4': 'C',
+                    // Billroth II
+                    'quiz-billroth2-1': 'B',
+                    'quiz-billroth2-2': 'B',
+                    'quiz-billroth2-3': 'B',
+                    'quiz-billroth2-4': 'B',
+                    // Roux-en-Y
+                    'quiz-roux-en-y-1': 'C',
+                    'quiz-roux-en-y-2': 'B',
+                    'quiz-roux-en-y-3': 'B',
+                    'quiz-roux-en-y-4': 'A',
+                    // Complications
+                    'quiz-complications-1': 'B',
+                    'quiz-complications-2': 'C',
+                    'quiz-complications-3': 'B',
+                    'quiz-complications-4': 'B',
+                    // Small Bowel Obstruction
+                    'quiz-sbo-1': 'B',
+                    'quiz-sbo-2': 'B',
+                    'quiz-sbo-3': 'B',
+                    'quiz-sbo-4': 'B',
+                    // Internal Hernias
+                    'quiz-internal-hernias-1': 'B',
+                    'quiz-internal-hernias-2': 'B',
+                    'quiz-internal-hernias-3': 'C',
+                    'quiz-internal-hernias-4': 'B'
+                };
+
+                // Check the answer
+                if (selected === answers[questionId]) {
+                    feedback.textContent = '✅ Correct!';
+                    feedback.classList.remove('incorrect');
+                    feedback.classList.add('correct');
+                    feedback.style.display = 'block';
+                    // Disable all buttons for this question
+                    const options = parent.querySelectorAll('.quiz-options button');
+                    options.forEach(opt => opt.classList.add('disabled'));
+                } else {
+                    feedback.textContent = '❌ Incorrect. Try again!';
+                    feedback.classList.remove('correct');
+                    feedback.classList.add('incorrect');
+                    feedback.style.display = 'block';
+                    // Disable only the incorrect button
+                    button.classList.add('disabled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
