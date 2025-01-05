@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🌙 NightScan: Skeletal Imaging Tutor</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Dark Theme Styles */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #00bfa5;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #1f1f1f;
+            padding: 10px 0;
+        }
+
+        nav button {
+            background-color: #2c2c2c;
+            border: none;
+            color: #e0e0e0;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            flex: 1 1 150px;
+            max-width: 200px;
+        }
+
+        nav button:hover, nav button.active {
+            background-color: #00bfa5;
+            color: #121212;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            flex: 1;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            color: #00bfa5;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #ffab00;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p, ul {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        /* Quiz Styles */
+        .quiz {
+            margin-top: 30px;
+        }
+
+        .quiz-question {
+            margin-bottom: 25px;
+        }
+
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            background-color: #2c2c2c;
+            border: none;
+            color: #e0e0e0;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .quiz-options button:hover:not(.disabled) {
+            background-color: #00bfa5;
+            color: #121212;
+        }
+
+        .quiz-options button.disabled {
+            background-color: #424242;
+            color: #9e9e9e;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .correct {
+            background-color: #388e3c;
+            color: #e0e0e0;
+        }
+
+        .incorrect {
+            background-color: #d32f2f;
+            color: #e0e0e0;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: #2c2c2c;
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #00bfa5;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 800px) {
+            nav button {
+                flex: 1 1 100px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>🌙 NightScan: Skeletal Imaging Tutor</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-button active" data-section="skeleton">Skeleton</button>
+        <button class="nav-button" data-section="tc-mdp">Tc-MDP Bone Scans</button>
+        <button class="nav-button" data-section="abnormal-distribution">Abnormal Distribution</button>
+        <button class="nav-button" data-section="super-scans">Super Scans</button>
+        <button class="nav-button" data-section="specific-cancers">Specific Cancers</button>
+        <button class="nav-button" data-section="bone-scan-vs-skeletal">Bone Scan vs Skeletal Survey</button>
+        <button class="nav-button" data-section="post-treatment">Post Treatment</button>
+        <button class="nav-button" data-section="prosthesis">Prosthesis Evaluation</button>
+        <button class="nav-button" data-section="neuropathic-foot">Neuropathic Foot</button>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="container">
+        <!-- Section 1: Skeleton -->
+        <section id="skeleton" class="active">
+            <h2>📚 Section 2: Skeleton</h2>
+            <p><strong>Tc-MDP:</strong> The workhorse of skeletal imaging is methylene diphosphonate (MDP) - which is tagged with Tc-99m.</p>
+            <h3>Mechanism</h3>
+            <p>MDP is a phosphate analog that binds with the crystalline hydroxyapatite in bone via a process called chemisorption. Chemisorption can also be described as “physicochemical adsorption” on multiple choice exams - for the purpose of confusing you. Distribution is based on osteoblastic activity and to a lesser extent blood flow.</p>
+            <ul>
+                <li><strong>Osteoblasts:</strong> Active in bone formation.</li>
+                <li><strong>Osteoclasts:</strong> Active in bone resorption.</li>
+            </ul>
+            <p>In the growing skeleton (peds), tracer/MDP deposition is also seen at epiphyseal growth plates and osteochondral junctions. Hot growth plates are normal on MDP bone scan.</p>
+            <p><em>Gamesmanship:</em> MDP and HDP are both bone agents so don’t get confused if they say HDP to purposefully confuse you.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-skeleton-1">
+                    <p><strong>1. What is the primary mechanism by which Tc-MDP binds to bone?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Physical adsorption</button>
+                        <button data-answer="B">B) Chemisorption</button>
+                        <button data-answer="C">C) Ionic bonding</button>
+                        <button data-answer="D">D) Hydrogen bonding</button>
+                    </div>
+                    <div class="feedback" id="feedback-skeleton-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-skeleton-2">
+                    <p><strong>2. During a bone scan, increased tracer deposition at epiphyseal growth plates is considered:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Abnormal and indicative of disease</button>
+                        <button data-answer="B">B) Normal in pediatric patients</button>
+                        <button data-answer="C">C) A sign of osteoclast activity</button>
+                        <button data-answer="D">D) Indicative of super scan</button>
+                    </div>
+                    <div class="feedback" id="feedback-skeleton-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-skeleton-3">
+                    <p><strong>3. MDP uptake is primarily dependent on:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Osteoclastic activity</button>
+                        <button data-answer="B">B) Osteoblastic activity</button>
+                        <button data-answer="C">C) Cartilaginous activity</button>
+                        <button data-answer="D">D) Chondrocyte activity</button>
+                    </div>
+                    <div class="feedback" id="feedback-skeleton-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-skeleton-4">
+                    <p><strong>4. In pediatric patients, hot growth plates on an MDP bone scan indicate:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Bone metastasis</button>
+                        <button data-answer="B">B) Normal growth activity</button>
+                        <button data-answer="C">C) Osteomyelitis</button>
+                        <button data-answer="D">D) Fracture healing</button>
+                    </div>
+                    <div class="feedback" id="feedback-skeleton-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Tc-MDP Bone Scans -->
+        <section id="tc-mdp">
+            <h2>🔬 Tc-MDP Bone Scans</h2>
+            <h3>MDP Uptake Depends On:</h3>
+            <ul>
+                <li>Osteoblastic activity (why pure lytic lesions can be cold)</li>
+                <li>Blood Flow</li>
+            </ul>
+            <h3>Normal MDP Uptake / Localization Occurs At:</h3>
+            <ul>
+                <li>Bone</li>
+                <li>Epiphyses in kids</li>
+                <li>Kidney (not seen or very faint)</li>
+                <li>Bladder</li>
+                <li>Breasts (especially in young women)</li>
+                <li>Soft tissues - low levels</li>
+            </ul>
+            <p>After preparation of the tracer (15-25mCi) it is injected into the patient. Then you wait 2-4 hours to let the tracer clear from the soft tissues (so you can see the bones). Renal function is critical for this soft tissue clearing.</p>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-tcmdp-1">
+                    <p><strong>1. Which of the following factors does NOT significantly affect MDP uptake?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Osteoblastic activity</button>
+                        <button data-answer="B">B) Blood flow</button>
+                        <button data-answer="C">C) Osteoclastic activity</button>
+                        <button data-answer="D">D) Renal function</button>
+                    </div>
+                    <div class="feedback" id="feedback-tcmdp-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-tcmdp-2">
+                    <p><strong>2. What is a "Super Scan" characterized by?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) High renal activity and low bone uptake</button>
+                        <button data-answer="B">B) No abnormal focal uptake with no visible kidneys</button>
+                        <button data-answer="C">C) Increased uptake in the thyroid and salivary glands</button>
+                        <button data-answer="D">D) Predominantly soft tissue uptake</button>
+                    </div>
+                    <div class="feedback" id="feedback-tcmdp-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-tcmdp-3">
+                    <p><strong>3. Why is renal function critical in Tc-MDP bone scans?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) It affects bone metabolism</button>
+                        <button data-answer="B">B) It influences tracer clearance from soft tissues</button>
+                        <button data-answer="C">C) It alters blood flow to bones</button>
+                        <button data-answer="D">D) It impacts osteoblastic activity</button>
+                    </div>
+                    <div class="feedback" id="feedback-tcmdp-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-tcmdp-4">
+                    <p><strong>4. Normal MDP uptake in young women is prominently seen in:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Thyroid glands</button>
+                        <button data-answer="B">B) Breasts</button>
+                        <button data-answer="C">C) Liver</button>
+                        <button data-answer="D">D) Spleen</button>
+                    </div>
+                    <div class="feedback" id="feedback-tcmdp-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Abnormal Distribution -->
+        <section id="abnormal-distribution">
+            <h2>⚠️ Abnormal Distribution</h2>
+            <p>Increased focal uptake is very nonspecific and can indicate bone turnover due to various conditions such as metastatic deposits, arthritis, or healing fractures.</p>
+            <h3>Sneaky Situations:</h3>
+            <ul>
+                <li><strong>Skull Sutures:</strong> Normal persistence, but marked suture uptake may suggest renal osteodystrophy.</li>
+                <li><strong>Breast Uptake:</strong> Mild diffuse uptake is normal, especially in younger women. Focal uptake can indicate cancer.</li>
+                <li><strong>Renal Cortex Activity:</strong> Should have normal uptake. Hotter renal cortex than adjacent lumbar spine suggests hemochromatosis.</li>
+                <li><strong>Liver Uptake:</strong> Can indicate contamination, primary hepatoma, metastases, amyloidosis, or liver necrosis.</li>
+                <li><strong>Spleen Uptake:</strong> Commonly shows auto-infarcted spleen in sickle cell patients.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-abdis-1">
+                    <p><strong>1. Focal uptake in the liver during a bone scan is most commonly associated with:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Hemochromatosis</button>
+                        <button data-answer="B">B) Amyloidosis</button>
+                        <button data-answer="C">C) Osteoporosis</button>
+                        <button data-answer="D">D) Sickle cell disease</button>
+                    </div>
+                    <div class="feedback" id="feedback-abdis-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-abdis-2">
+                    <p><strong>2. Which condition is indicated by increased uptake along the periosteum of long bones, resembling tramlines?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Reflex Sympathetic Dystrophy</button>
+                        <button data-answer="B">B) Hypertrophic Osteoarthropathy</button>
+                        <button data-answer="C">C) Aneurysmal Bone Cyst</button>
+                        <button data-answer="D">D) Osteoid Osteoma</button>
+                    </div>
+                    <div class="feedback" id="feedback-abdis-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-abdis-3">
+                    <p><strong>3. Asymmetric hot uptake in the skull on a super scan suggests:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Hemochromatosis</button>
+                        <button data-answer="B">B) Metabolic super scan</button>
+                        <button data-answer="C">C) Diffuse prostate metastases</button>
+                        <button data-answer="D">D) Hyperparathyroidism</button>
+                    </div>
+                    <div class="feedback" id="feedback-abdis-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-abdis-4">
+                    <p><strong>4. Increased uptake in the spleen on a bone scan is commonly seen in:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Hemochromatosis</button>
+                        <button data-answer="B">B) Sickle cell disease</button>
+                        <button data-answer="C">C) Amyloidosis</button>
+                        <button data-answer="D">D) Osteoporosis</button>
+                    </div>
+                    <div class="feedback" id="feedback-abdis-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Super Scans -->
+        <section id="super-scans">
+            <h2>💫 Super Scans</h2>
+            <p>A "Super Scan" is characterized by diffuse skeletal metastatic activity with no visible kidneys, indicating that the tracer is predominantly taken up by the bones.</p>
+            <h3>Types of Super Scans:</h3>
+            <ul>
+                <li><strong>Diffuse Mets:</strong> Diffuse skeletal metastatic activity (commonly from breast and prostate cancers).</li>
+                <li><strong>Metabolic:</strong> From metabolic bone pathologies such as hyperparathyroidism, renal osteodystrophy, Paget's disease, or severe thyrotoxicosis.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-super-1">
+                    <p><strong>1. Which tracer is associated with higher resolution and cleaner images compared to Tc-MDP?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) 131I MIBG</button>
+                        <button data-answer="B">B) 18F Sodium Fluoride</button>
+                        <button data-answer="C">C) 99mTc Sulfur Colloid</button>
+                        <button data-answer="D">D) 18F FDG</button>
+                    </div>
+                    <div class="feedback" id="feedback-super-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-super-2">
+                    <p><strong>2. In a metabolic super scan, which pattern differentiates it from diffuse prostate metastases?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Hot uptake in the kidneys</button>
+                        <button data-answer="B">B) Asymmetric hot uptake in the skull</button>
+                        <button data-answer="C">C) Uniform tracer uptake in the appendicular skeleton</button>
+                        <button data-answer="D">D) Increased uptake in the liver</button>
+                    </div>
+                    <div class="feedback" id="feedback-super-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-super-3">
+                    <p><strong>3. Which of the following is a common cause of a metabolic super scan?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Osteoarthritis</button>
+                        <button data-answer="B">B) Hyperparathyroidism</button>
+                        <button data-answer="C">C) Acute fracture</button>
+                        <button data-answer="D">D) Bone cyst</button>
+                    </div>
+                    <div class="feedback" id="feedback-super-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-super-4">
+                    <p><strong>4. Which cancer is most commonly associated with diffuse skeletal metastases?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Breast Cancer</button>
+                        <button data-answer="B">B) Prostate Cancer</button>
+                        <button data-answer="C">C) Lung Cancer</button>
+                        <button data-answer="D">D) Neuroblastoma</button>
+                    </div>
+                    <div class="feedback" id="feedback-super-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Specific Cancers -->
+        <section id="specific-cancers">
+            <h2>🎯 Specific Cancers</h2>
+            <p>Different cancers have distinct patterns of bone metastases. Understanding these patterns can aid in diagnosis and management.</p>
+            <h3>Common Patterns:</h3>
+            <ul>
+                <li><strong>Prostate Cancer:</strong> Loves bone mets, especially in the spine.</li>
+                <li><strong>Lung Cancer:</strong> Tends to metastasize to the appendicular skeleton.</li>
+                <li><strong>Breast Cancer:</strong> Most common metastases to the spine.</li>
+                <li><strong>Neuroblastoma:</strong> Frequently metastasizes to the metaphysis of long bones.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-specific-1">
+                    <p><strong>1. Which cancer is most likely to present with bone metastases in the spine?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Breast Cancer</button>
+                        <button data-answer="B">B) Prostate Cancer</button>
+                        <button data-answer="C">C) Lung Cancer</button>
+                        <button data-answer="D">D) Neuroblastoma</button>
+                    </div>
+                    <div class="feedback" id="feedback-specific-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-specific-2">
+                    <p><strong>2. A solitary hot sternal lesion in a patient with known breast cancer is most likely:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Benign bone island</button>
+                        <button data-answer="B">B) Metastasis</button>
+                        <button data-answer="C">C) Osteomyelitis</button>
+                        <button data-answer="D">D) Fibrous dysplasia</button>
+                    </div>
+                    <div class="feedback" id="feedback-specific-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-specific-3">
+                    <p><strong>3. Which tracer is superior for detecting neuroblastoma bone metastases?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) 18F FDG PET</button>
+                        <button data-answer="B">B) 131I MIBG</button>
+                        <button data-answer="C">C) 99mTc MDP</button>
+                        <button data-answer="D">D) 18F Sodium Fluoride</button>
+                    </div>
+                    <div class="feedback" id="feedback-specific-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-specific-4">
+                    <p><strong>4. Which cancer is associated with hypertrophic osteoarthropathy in approximately 10% of patients?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Breast Cancer</button>
+                        <button data-answer="B">B) Prostate Cancer</button>
+                        <button data-answer="C">C) Lung Cancer</button>
+                        <button data-answer="D">D) Neuroblastoma</button>
+                    </div>
+                    <div class="feedback" id="feedback-specific-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Bone Scan vs Skeletal Survey -->
+        <section id="bone-scan-vs-skeletal">
+            <h2>🦴 Bone Scan vs Skeletal Survey</h2>
+            <h3>Bone Scan:</h3>
+            <ul>
+                <li>More sensitive for blastic metastases.</li>
+                <li>Utilizes Tc-MDP or other tracers.</li>
+                <li>Preferred for detecting bone metastases from various cancers.</li>
+            </ul>
+            <h3>Skeletal Survey:</h3>
+            <ul>
+                <li>More sensitive for lytic metastases.</li>
+                <li>Uses plain radiographs (X-rays).</li>
+                <li>Preferred for evaluating osseous involvement in multiple myeloma.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-bvs-1">
+                    <p><strong>1. Which imaging modality is more sensitive for detecting blastic metastases?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Skeletal Survey</button>
+                        <button data-answer="B">B) Bone Scan</button>
+                        <button data-answer="C">C) MRI</button>
+                        <button data-answer="D">D) CT Scan</button>
+                    </div>
+                    <div class="feedback" id="feedback-bvs-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-bvs-2">
+                    <p><strong>2. For evaluating osseous involvement in multiple myeloma, which is the preferred method?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Bone Scan</button>
+                        <button data-answer="B">B) Skeletal Survey</button>
+                        <button data-answer="C">C) PET Scan</button>
+                        <button data-answer="D">D) Ultrasound</button>
+                    </div>
+                    <div class="feedback" id="feedback-bvs-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-bvs-3">
+                    <p><strong>3. Which imaging modality uses Tc-MDP or similar tracers?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Skeletal Survey</button>
+                        <button data-answer="B">B) Bone Scan</button>
+                        <button data-answer="C">C) MRI</button>
+                        <button data-answer="D">D) CT Scan</button>
+                    </div>
+                    <div class="feedback" id="feedback-bvs-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-bvs-4">
+                    <p><strong>4. Which imaging modality is preferred for detecting lytic metastases?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Skeletal Survey</button>
+                        <button data-answer="B">B) Bone Scan</button>
+                        <button data-answer="C">C) MRI</button>
+                        <button data-answer="D">D) Ultrasound</button>
+                    </div>
+                    <div class="feedback" id="feedback-bvs-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Post Treatment -->
+        <section id="post-treatment">
+            <h2>🔄 Post Treatment</h2>
+            <h3>Flare Phenomenon:</h3>
+            <p>The “flare” typically occurs around 2 weeks to 3 months post-treatment and manifests as an increase in both the number and size of lesions, potentially mimicking disease progression.</p>
+            <ul>
+                <li>On plain film, lesions should become more sclerotic.</li>
+                <li>After 3 months, lesions should improve, confirming a response to therapy.</li>
+            </ul>
+            <h3>Radiation Therapy Changes:</h3>
+            <ul>
+                <li>Acute Phase: Warm uptake within the radiation port peaking around 2-3 months.</li>
+                <li>Late Phase: Cold uptake at 6 months indicates permanent change; hot uptake later suggests recurrent disease.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-post-1">
+                    <p><strong>1. The "flare" phenomenon after chemotherapy is best identified by:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Immediate decrease in lesion size</button>
+                        <button data-answer="B">B) Increase in number and size of lesions</button>
+                        <button data-answer="C">C) No change in bone scan appearance</button>
+                        <button data-answer="D">D) Complete resolution of tracer uptake</button>
+                    </div>
+                    <div class="feedback" id="feedback-post-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-post-2">
+                    <p><strong>2. A lesion that becomes hot on a bone scan after initially being cold is indicative of:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Healing fracture</button>
+                        <button data-answer="B">B) Recurrent disease</button>
+                        <button data-answer="C">C) Mature heterotopic ossification</button>
+                        <button data-answer="D">D) Acute infection</button>
+                    </div>
+                    <div class="feedback" id="feedback-post-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-post-3">
+                    <p><strong>3. Late phase changes after radiation therapy that are cold at 6 months suggest:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Active bone turnover</button>
+                        <button data-answer="B">B) Permanent bone changes</button>
+                        <button data-answer="C">C) Recurrent disease</button>
+                        <button data-answer="D">D) Acute inflammation</button>
+                    </div>
+                    <div class="feedback" id="feedback-post-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-post-4">
+                    <p><strong>4. What should be done if a bone scan shows a flare phenomenon?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Immediately start new chemotherapy</button>
+                        <button data-answer="B">B) Confirm with plain film and follow up</button>
+                        <button data-answer="C">C) Ignore as it's always benign</button>
+                        <button data-answer="D">D) Proceed with surgical intervention</button>
+                    </div>
+                    <div class="feedback" id="feedback-post-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Prosthesis Evaluation -->
+        <section id="prosthesis">
+            <h2>🛠️ Prosthesis Evaluation</h2>
+            <p>Differentiating infection from aseptic loosening in prostheses is challenging. Bone scan findings can be nonspecific, requiring combined imaging techniques for accurate diagnosis.</p>
+            <h3>Key Points:</h3>
+            <ul>
+                <li>Bone scan shows diffusely increased activity with Tc-MDP in infection.</li>
+                <li>Aseptic loosening shows focal uptake along the stem and lesser trochanter.</li>
+                <li>Combined Tc-Sulfur Colloid and WBC imaging differentiates infection from loosening.</li>
+                <li>A negative bone scan excludes loosening or infection.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-prosthesis-1">
+                    <p><strong>1. What combination of imaging studies is needed to differentiate infection from aseptic loosening in prostheses?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Bone Scan and MRI</button>
+                        <button data-answer="B">B) Tc-Sulfur Colloid and WBC Imaging</button>
+                        <button data-answer="C">C) Skeletal Survey and CT Scan</button>
+                        <button data-answer="D">D) PET Scan and Ultrasound</button>
+                    </div>
+                    <div class="feedback" id="feedback-prosthesis-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-prosthesis-2">
+                    <p><strong>2. A negative bone scan in prosthesis evaluation typically indicates:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Presence of infection</button>
+                        <button data-answer="B">B) Loosening of the prosthesis</button>
+                        <button data-answer="C">C) Exclusion of loosening or infection</button>
+                        <button data-answer="D">D) Need for surgical intervention</button>
+                    </div>
+                    <div class="feedback" id="feedback-prosthesis-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-prosthesis-3">
+                    <p><strong>3. Increased tracer activity along the stem of a prosthesis suggests:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Infection</button>
+                        <button data-answer="B">B) Aseptic loosening</button>
+                        <button data-answer="C">C) Both infection and loosening</button>
+                        <button data-answer="D">D) Neither infection nor loosening</button>
+                    </div>
+                    <div class="feedback" id="feedback-prosthesis-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-prosthesis-4">
+                    <p><strong>4. Combined Tc-Sulfur Colloid and WBC study is positive for infection if:</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) There is activity on both WBC and Tc-Sulfur Colloid images</button>
+                        <button data-answer="B">B) There is no activity on both WBC and Tc-Sulfur Colloid images</button>
+                        <button data-answer="C">C) There is activity on WBC image without corresponding Tc-Sulfur Colloid activity</button>
+                        <button data-answer="D">D) There is activity on Tc-Sulfur Colloid image without corresponding WBC activity</button>
+                    </div>
+                    <div class="feedback" id="feedback-prosthesis-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Neuropathic Foot -->
+        <section id="neuropathic-foot">
+            <h2>🦶 Neuropathic Foot</h2>
+            <p>Neuropathic foot is commonly seen in diabetics and can present challenges in distinguishing between arthritis changes and infection using Tc-MDP bone scans.</p>
+            <h3>Key Points:</h3>
+            <ul>
+                <li>Most commonly seen in the tarsal and tarsal-metatarsal joints (60%).</li>
+                <li>Combined marrow and WBC studies help differentiate infection.</li>
+                <li>Fourth phase imaging at 24 hours may help distinguish bone from delayed soft tissue clearance.</li>
+                <li>Tc99 HMPAO WBC imaging is preferred in children and small body parts like hands and feet.</li>
+            </ul>
+            <div class="quiz">
+                <h3>Quiz</h3>
+                <!-- Quiz Question 1 -->
+                <div class="quiz-question" id="quiz-foot-1">
+                    <p><strong>1. In diabetic patients, what additional phase may help distinguish between bone and soft tissue clearance?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Second phase</button>
+                        <button data-answer="B">B) Third phase</button>
+                        <button data-answer="C">C) Fourth phase</button>
+                        <button data-answer="D">D) Immediate phase</button>
+                    </div>
+                    <div class="feedback" id="feedback-foot-1"></div>
+                </div>
+                <!-- Quiz Question 2 -->
+                <div class="quiz-question" id="quiz-foot-2">
+                    <p><strong>2. Tc99 HMPAO WBC imaging is preferred over In-WBC scans in which scenario?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Adults with hip prostheses</button>
+                        <button data-answer="B">B) Children and small body parts like hands and feet</button>
+                        <button data-answer="C">C) Patients with renal impairment</button>
+                        <button data-answer="D">D) Chronic osteomyelitis cases</button>
+                    </div>
+                    <div class="feedback" id="feedback-foot-2"></div>
+                </div>
+                <!-- Quiz Question 3 -->
+                <div class="quiz-question" id="quiz-foot-3">
+                    <p><strong>3. Why is Tc99 HMPAO preferred in imaging small body parts?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) It has higher resolution</button>
+                        <button data-answer="B">B) It has a lower absorbed dose</button>
+                        <button data-answer="C">C) It accumulates more in soft tissues</button>
+                        <button data-answer="D">D) It has a longer half-life</button>
+                    </div>
+                    <div class="feedback" id="feedback-foot-3"></div>
+                </div>
+                <!-- Quiz Question 4 -->
+                <div class="quiz-question" id="quiz-foot-4">
+                    <p><strong>4. What is a common challenge when imaging the spine with WBC scans?</strong></p>
+                    <div class="quiz-options">
+                        <button data-answer="A">A) Increased uptake in spinal discs</button>
+                        <button data-answer="B">B) WBC frequently fails to migrate showing a photopenic area</button>
+                        <button data-answer="C">C) Excessive uptake in spinal nerves</button>
+                        <button data-answer="D">D) Low resolution imaging</button>
+                    </div>
+                    <div class="feedback" id="feedback-foot-4"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 NightScan. All rights reserved.
+    </footer>
+
+    <!-- JavaScript for Navigation and Quiz Functionality -->
+    <script>
+        // Navigation Handling
+        const navButtons = document.querySelectorAll('.nav-button');
+        const sections = document.querySelectorAll('section');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                // Hide all sections
+                sections.forEach(sec => sec.classList.remove('active'));
+                // Show the selected section
+                const sectionId = button.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                // Update Progress Bar
+                updateProgress(button);
+            });
+        });
+
+        // Progress Bar Handling
+        const progressBar = document.getElementById('progress-bar');
+        const totalSections = navButtons.length;
+        const completedSections = new Set();
+
+        function updateProgress(currentButton) {
+            const sectionId = currentButton.getAttribute('data-section');
+            if (!completedSections.has(sectionId)) {
+                completedSections.add(sectionId);
+            }
+            const percent = (completedSections.size / totalSections) * 100;
+            progressBar.style.width = percent + '%';
+        }
+
+        // Quiz Handling
+        const quizButtons = document.querySelectorAll('.quiz-options button');
+
+        quizButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const parent = button.closest('.quiz-question');
+                const feedback = parent.querySelector('.feedback');
+                const selected = button.getAttribute('data-answer');
+                const questionId = parent.id;
+
+                // Define correct answers
+                const answers = {
+                    // Skeleton
+                    'quiz-skeleton-1': 'B',
+                    'quiz-skeleton-2': 'B',
+                    'quiz-skeleton-3': 'B',
+                    'quiz-skeleton-4': 'B',
+                    // Tc-MDP
+                    'quiz-tcmdp-1': 'C',
+                    'quiz-tcmdp-2': 'B',
+                    'quiz-tcmdp-3': 'B',
+                    'quiz-tcmdp-4': 'B',
+                    // Abnormal Distribution
+                    'quiz-abdis-1': 'B',
+                    'quiz-abdis-2': 'B',
+                    'quiz-abdis-3': 'B',
+                    'quiz-abdis-4': 'B',
+                    // Super Scans
+                    'quiz-super-1': 'B',
+                    'quiz-super-2': 'B',
+                    'quiz-super-3': 'B',
+                    'quiz-super-4': 'A',
+                    // Specific Cancers
+                    'quiz-specific-1': 'A',
+                    'quiz-specific-2': 'B',
+                    'quiz-specific-3': 'B',
+                    'quiz-specific-4': 'C',
+                    // Bone Scan vs Skeletal Survey
+                    'quiz-bvs-1': 'B',
+                    'quiz-bvs-2': 'B',
+                    'quiz-bvs-3': 'B',
+                    'quiz-bvs-4': 'A',
+                    // Post Treatment
+                    'quiz-post-1': 'B',
+                    'quiz-post-2': 'B',
+                    'quiz-post-3': 'B',
+                    'quiz-post-4': 'B',
+                    // Prosthesis Evaluation
+                    'quiz-prosthesis-1': 'B',
+                    'quiz-prosthesis-2': 'C',
+                    'quiz-prosthesis-3': 'B',
+                    'quiz-prosthesis-4': 'C',
+                    // Neuropathic Foot
+                    'quiz-foot-1': 'C',
+                    'quiz-foot-2': 'B',
+                    'quiz-foot-3': 'B',
+                    'quiz-foot-4': 'B'
+                };
+
+                // Check the answer
+                if (selected === answers[questionId]) {
+                    feedback.textContent = '✅ Correct!';
+                    feedback.classList.remove('incorrect');
+                    feedback.classList.add('correct');
+                    feedback.style.display = 'block';
+                    // Disable all buttons for this question
+                    const options = parent.querySelectorAll('.quiz-options button');
+                    options.forEach(opt => opt.classList.add('disabled'));
+                } else {
+                    feedback.textContent = '❌ Incorrect. Try again!';
+                    feedback.classList.remove('correct');
+                    feedback.classList.add('incorrect');
+                    feedback.style.display = 'block';
+                    // Optionally, disable the wrong button
+                    button.classList.add('disabled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
