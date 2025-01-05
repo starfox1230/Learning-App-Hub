@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🌙 NightScan Hub</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Dark Theme Styles */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #00bfa5;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #1f1f1f;
+            padding: 10px 0;
+        }
+
+        nav button {
+            background-color: #2c2c2c;
+            border: none;
+            color: #e0e0e0;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            flex: 1 1 150px;
+            max-width: 200px;
+        }
+
+        nav button:hover, nav button.active {
+            background-color: #00bfa5;
+            color: #121212;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 160px); /* Adjust based on header and nav height */
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 800px) {
+            nav button {
+                flex: 1 1 100px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>🌙 NightScan Hub</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="webapps-nav">
+        <!-- Webapp buttons will be injected here -->
+    </nav>
+
+    <!-- Content Container -->
+    <div class="container">
+        <iframe id="webapp-frame" src="" title="WebApp Display"></iframe>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 NighScan Hub. All rights reserved.
+    </footer>
+
+    <!-- JavaScript for Navigation and WebApp Loading -->
+    <script>
+        // Define your webapps here
+        const webapps = [
+            {
+                "name": "🌙 NightScan: Skeletal Imaging Tutor",
+                "description": "An interactive tutor for skeletal imaging with quizzes.",
+                "icon": "assets/images/nightscan-icon.png",
+                "link": "Skeletal-Imaging-Tutor/index.html"
+            },
+            {
+                "name": "WebApp2 Name",
+                "description": "Description for WebApp2.",
+                "icon": "assets/images/webapp2-icon.png",
+                "link": "webapp2/index.html"
+            }
+            // Add more webapps here
+        ];
+
+        const nav = document.getElementById('webapps-nav');
+        const iframe = document.getElementById('webapp-frame');
+
+        // Function to create navigation buttons
+        function createNavButtons() {
+            webapps.forEach((webapp, index) => {
+                const button = document.createElement('button');
+                button.innerText = webapp.name;
+                button.dataset.link = webapp.link;
+
+                // Set the first webapp as active and load it by default
+                if(index === 0){
+                    button.classList.add('active');
+                    iframe.src = webapp.link;
+                }
+
+                // Add click event listener
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+                    // Add active class to the clicked button
+                    button.classList.add('active');
+                    // Load the selected webapp in iframe
+                    iframe.src = webapp.link;
+                });
+
+                nav.appendChild(button);
+            });
+        }
+
+        // Initialize navigation buttons on page load
+        window.onload = createNavButtons;
+    </script>
+</body>
+</html>
