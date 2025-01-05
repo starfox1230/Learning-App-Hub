@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>🌌 SpaceLearn: Esophageal & Gastric Disorders Tutor</title>
+    <title>🌌 SpaceLearn: Gastric Disorders Tutor</title>
     <style>
         /* Reset CSS */
         * {
@@ -263,33 +263,12 @@
 <body>
     <!-- Header -->
     <header>
-        <h1>🌌 SpaceLearn: Esophageal & Gastric Disorders Tutor</h1>
+        <h1>🌌 SpaceLearn: Gastric Disorders Tutor</h1>
     </header>
 
     <!-- Navigation -->
     <nav>
-        <!-- Existing Esophageal Sections -->
-        <button class="nav-button active" data-section="candidiasis">Candidiasis</button>
-        <button class="nav-button" data-section="ulcers">Ulcers</button>
-        <button class="nav-button" data-section="herpes">Herpes</button>
-        <button class="nav-button" data-section="glycogenic-acanthosis">Glycogenic Acanthosis</button>
-        <button class="nav-button" data-section="crohns">Crohn’s Disease</button>
-        <button class="nav-button" data-section="esophageal-duplication-cysts">Esophageal Duplication Cysts</button>
-        <button class="nav-button" data-section="esophageal-diverticulum">Esophageal Diverticulum</button>
-        <button class="nav-button" data-section="pseudodiverticulosis">Esophageal Pseudodiverticulosis</button>
-        <button class="nav-button" data-section="papilloma">Papilloma</button>
-        <button class="nav-button" data-section="esophageal-web">Esophageal Web</button>
-        <button class="nav-button" data-section="plummer-vinson">Plummer-Vinson Syndrome</button>
-        <button class="nav-button" data-section="eosinophilic-esophagitis">Eosinophilic Esophagitis</button>
-        <button class="nav-button" data-section="esophageal-spasm">Esophageal Spasm</button>
-        <button class="nav-button" data-section="dysphagia-lusoria">Dysphagia Lusoria</button>
-        <button class="nav-button" data-section="dilated-esophagus">Dilated Esophagus</button>
-        <button class="nav-button" data-section="varices">Varices</button>
-        <button class="nav-button" data-section="high-yield-trivia">High Yield Trivia</button>
-        <button class="nav-button" data-section="path-esophagitis">Path Esophagitis</button>
-
-        <!-- New Stomach Sections -->
-        <button class="nav-button" data-section="gastric-tumors">Gastric Tumors</button>
+        <button class="nav-button active" data-section="gastric-tumors">Gastric Tumors</button>
         <button class="nav-button" data-section="gastric-ulcers">Gastric Ulcers</button>
         <button class="nav-button" data-section="misc-gastric-conditions">Misc. Gastric Conditions</button>
     </nav>
@@ -303,9 +282,6 @@
 
     <!-- Content Container -->
     <div class="container">
-        <!-- Existing Esophageal Sections -->
-        <!-- ... Existing sections like Candidiasis, Ulcers, Herpes, etc. ... -->
-
         <!-- Section: Gastric Tumors -->
         <section id="gastric-tumors" class="active">
             <h2>🎗️ Gastric Tumors</h2>
@@ -353,7 +329,7 @@
                 <li>Classic Look: Diffuse wall thickening (>1 cm) without gastric outlet obstruction</li>
             </ul>
 
-            <h3>📌 GIST vs. Adenocarcinoma vs. Lymphoma</h3>
+            <h3>📌 Comparing GIST, Adenocarcinoma, and Lymphoma</h3>
             <ul>
                 <li><strong>GIST:</strong> Smoothly marginated and exophytic</li>
                 <li><strong>Adenocarcinoma:</strong> Large, ulcerated, heterogeneous mass with focal and nodular asymmetric wall thickening (>12mm)</li>
@@ -509,14 +485,14 @@
 
             <h3>📌 Gastric Volvulus</h3>
             <ul>
-                <li>Organoaxial:
+                <li><strong>Organoaxial:</strong>
                     <ul>
                         <li>The greater curvature flips over the lesser curvature</li>
                         <li>More common in older females with paraesophageal hernias</li>
                         <li>Gastric Antrum BELOW the GE Junction</li>
                     </ul>
                 </li>
-                <li>Mesenteroaxial:
+                <li><strong>Mesenteroaxial:</strong>
                     <ul>
                         <li>Rotates around the mesentery</li>
                         <li>Can cause ischemia and obstruction, often requiring surgical intervention</li>
@@ -642,56 +618,6 @@
 
                 // Define correct answers
                 const answers = {
-                    // Candidiasis
-                    'quiz-candidiasis-1': 'A',
-                    'quiz-candidiasis-2': 'B',
-                    'quiz-candidiasis-3': 'B',
-                    'quiz-candidiasis-4': 'A',
-                    // Ulcers
-                    'quiz-ulcers-1': 'A',
-                    'quiz-ulcers-2': 'C',
-                    'quiz-ulcers-3': 'B',
-                    'quiz-ulcers-4': 'C',
-                    // Herpes
-                    'quiz-herpes-1': 'A',
-                    'quiz-herpes-2': 'A',
-                    'quiz-herpes-3': 'B',
-                    'quiz-herpes-4': 'D',
-                    // Glycogenic Acanthosis
-                    'quiz-glycogenic-acanthosis-1': 'B',
-                    'quiz-glycogenic-acanthosis-2': 'B',
-                    'quiz-glycogenic-acanthosis-3': 'C',
-                    'quiz-glycogenic-acanthosis-4': 'B',
-                    // Crohn’s Disease
-                    'quiz-crohns-1': 'B',
-                    'quiz-crohns-2': 'B',
-                    'quiz-crohns-3': 'B',
-                    'quiz-crohns-4': 'C',
-                    // Esophageal Duplication Cysts
-                    'quiz-duplication-cysts-1': 'B',
-                    'quiz-duplication-cysts-2': 'C',
-                    'quiz-duplication-cysts-3': 'B',
-                    'quiz-duplication-cysts-4': 'B',
-                    // Esophageal Diverticulum
-                    'quiz-diverticulum-1': 'B',
-                    'quiz-diverticulum-2': 'B',
-                    'quiz-diverticulum-3': 'B',
-                    'quiz-diverticulum-4': 'C',
-                    // Esophageal Pseudodiverticulosis
-                    'quiz-pseudodiverticulosis-1': 'B',
-                    'quiz-pseudodiverticulosis-2': 'A',
-                    'quiz-pseudodiverticulosis-3': 'C',
-                    'quiz-pseudodiverticulosis-4': 'B',
-                    // Papilloma
-                    'quiz-papilloma-1': 'B',
-                    'quiz-papilloma-2': 'A',
-                    'quiz-papilloma-3': 'C',
-                    'quiz-papilloma-4': 'C',
-                    // Esophageal Web
-                    'quiz-web-1': 'B',
-                    'quiz-web-2': 'A',
-                    'quiz-web-3': 'C',
-                    'quiz-web-4': 'B',
                     // Gastric Tumors
                     'quiz-gastric-tumors-1': 'A',
                     'quiz-gastric-tumors-2': 'C',
